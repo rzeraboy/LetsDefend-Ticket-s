@@ -1,0 +1,89 @@
+🐱‍💻 Relatório de Investigação de Incidente: SOC291
+1. Resumo do Alerta
+ID do Evento: 267
+
+Data e Hora: 10 de junho de 2024 às 06:56
+
+Regra Disparada: SOC291 - System Time Lookup Detected
+
+Host Afetado: Campbell (172.16.17.213)
+
+Comando de Gatilho: net time \\EC2AMAZ-ILGVOIN
+
+Mapeamento MITRE ATT&CK: TA0001 (Initial Access), TA0007 (Discovery), T1110 (Brute Force), T1033, T1069, T1087, T1082, T1124, T1018, T1016, T1049.
+
+
+2. Análise e Descobertas
+Análise do Ataque (Acesso Inicial e Exploração)
+
+Identificado ataque direcionado a porta 3389 RDP ao HOST Campbell, vindo do IP externo 37.19.221.238.
+O atacante realizou testes a usuários padrões de sistemas.
+
+Ás 06:51 começou tentando logar com os usuários:
+
+Usuário: teste
+Tentativa Falha, "O usuário não existe no sistema."
+
+Usuário: guest
+user válido porém errou a senha.
+Tendo em mente que o user era um "convidado" não insistiu em tentativas de acesso, possívelmente não havia privilégios admnistrativos e continuou tentando outras contas.
+
+Usuário: root
+Outra tentativa falha, não existia o usuário.
+
+Usuário: letsdefend
+Identificou o usuário válido, porém com senha incorreta.
+Por ser um usuário fora do padrão, o atacando deu continuidade na quebra da senha, pois acreditava ser uma conta admin.
+
+O invasor precisou de apenas 3 tentativas de bruteforce para conseguir acesso a máquina.
+Ás 06:54, com registro EventID 4624 (Login bem-sucedido) confirmado o comprometimento da máquina.
+
+
+Estado do Endpoint (Fase de Discovery)
+
+Com acesso a máquina o atacante abriu o terminal cmd.exe e executou uma sequência de comandos nativos, focados em reconhecimento interno. (técnicas de discovery)
+Comandos:
+
+whoami e whoami /groups
+Usados para verificar usuário e mapear niveis de privilegio e grupos de segurança atual. (T1033 / T1069)
+
+net user
+Listar contas de usuários locais ativas no sistema (T1087)
+
+net time \\EC2AMAZ-ILGVOIN
+obs: comando que gerou o gatilho para o alerta do SOC.
+Serve para descobrir ou sincronizar o horário do sistema. (T1124)
+
+arp -a
+Listar dispositivos vizinhos que se comunicam com a máquina, possível pensamento em movimentação lateral (T1018)
+
+ipconfig e ipconfig /all
+Configurações de rede, máscara e servidores dns (T1016)
+
+netstat
+Monitorar conexões ativas e portas abertas do endpoint (T1049)
+
+tasklist /svc
+Listar serviços e processos rodando na máquina, o intuito é identificar se há antivirus ou EDR ativos para burlar ou desativa-los (T1082)
+
+Assim como no modelo da cyber kill chain, o atacante pulou etapas de persistência ou C2 imediata, indo direto da exploração para a ação nos objetivos de reconhecimento da rede
+
+
+3. Contenção e Mitigação
+
+Para cortar o acesso e proteger o restante do ambiente, sugiro as seguintes decisões: 
+
+Isolamento do Host
+Reset da senha do usuário comprometido
+Derrubar as sessões ativas de RDP
+Bloqueio de IP: Adicionar o IP de origem do ataque em lista de bloqueio do firewall de borda.
+
+Obs: O caso está sendo repassado para o time de Resposta a Incidentes (IR)
+
+
+4. Veredito Final
+
+Classificação: Verdadeiro Positivo (TP)
+Status Final: Ataque inicial contido / Caso escalado para o IR.
+
+
