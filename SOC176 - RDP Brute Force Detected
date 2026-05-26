@@ -1,0 +1,47 @@
+1. Resumo do Alerta
+
+ID do Evento: 126
+
+Data e Hora: 08 de março de 2023 às 10:32 AM
+
+Regra Disparada: SOC176 - RDP Brute Force Detected
+
+Host Afetado: Olivia (172.16.17.66)
+
+IP de Origem: 18.218.132.237
+
+Mapeamento MITRE ATT&CK: TA0001 (Initial Access) / T1110.002 (Brute Force: Password Guessing).
+
+
+2. Análise e Descobertas
+
+Análise dos logs e tráfego
+
+Foi identificado 8 falhas consecutivas de login RDP ao usuário Olivia as 10:31 AM. (T1110.002)
+
+Portas de origem:
+Port: 49760 - 3 tentativas
+Port: 49761 a 49765 houve 1 tentativa em cada porta
+Ambas no mesmo minuto.
+
+Estado do Endpoint:
+
+Verificando os logs do host Olivia não houve comprometimento na máquina / usuário.
+Sem histórico de comandos no CMD log
+
+Último logon registrado foi as 10:13 AM (antes do inicio do ataque)
+
+3. Contenção e Mitigação
+
+Aconselho verificar com o usuário / cliente se esse comportamento é esperado por parte desse ip.
+Embora o comportamento sequencial de portas aponta para atividade automatizada maliciosa.
+
+Em caso negativo, bloquar no firewall o ip malicioso.
+
+Não será necessário isolar o host pois não há sinais de comprometimento.
+
+4. Veredito Final
+
+Classificação: Verdadeiro Positivo (TP) — O ataque de força bruta realmente aconteceu, mas falhou.
+
+Status Final: Tentativa de ataque mitigada / IP recomendado para bloqueio.
