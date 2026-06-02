@@ -1,0 +1,46 @@
+1 Resumo do evento
+
+Id do evento: 213
+
+Data e hora: 26 de Dezembro de 2023 ás 01:14
+
+Regra Disparada: SOC177 - Multiple User Login Failures Detected on Same Machine
+
+Host Afetado: Stephen (172.16.17.153)
+
+Ip de Origem: 89.187.185.171
+
+Mapeamento MITRE ATT&CK: TA0001 (Initial Access) / T1110.002 (Brute Force: Password Guessing).
+
+2. Análise e Descobertas
+
+Houve 9 tentativas de acesso RDP ao usuário Stephen sem sucesso. 
+Ambas com senha incorreta.
+O que gerou o gatilho do alerta da regra SOC177, que monitora múltiplas falhas de login.
+
+Estado do Endpoint:
+
+Verificando os logs do host Stephen não houve comprometimento na máquina.
+Todos os EventID 4625 (Falha de logon).
+Histórico de comandos no CMD log não bate com sinais de invasão ou persistência.
+
+
+3. Contenção e Mitigação
+
+Aconselho o bloqueio do IP de origem, visto que o mesmo ja possui reputação negativa em ferramentas de threat intelligence,
+com alto índice de brute force.
+
+Como não foi comprometivo o usuário, não vejo necessidade de alterar a senha.
+
+4. Veredito Final
+
+Classificação: Verdadeiro Positivo (TP) - Houve brute force ao usuário, mas falhou.
+
+Status Final: Tentativa de ataque mitigada / Ip recomendado para bloqueio.
+
+
+
+
+
+
+
